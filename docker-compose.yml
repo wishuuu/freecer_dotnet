@@ -1,0 +1,22 @@
+﻿services:
+  freecer.webapp:
+    container_name: freecer-webapp
+    image: freecer.webapp
+    restart: always
+    build:
+      context: .
+      dockerfile: Freecer.WebApp/Dockerfile
+    ports:
+        - "5000:80"
+        - "5001:443"
+  
+  freecer.db:
+    container_name: freecer-db
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: freecer
+      POSTGRES_USER: freecer
+      POSTGRES_PASSWORD: freecer
+    ports:
+        - "5432:5432"

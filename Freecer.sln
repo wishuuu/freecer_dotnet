@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freecer.WebApp", "Freecer.WebApp\Freecer.WebApp.csproj", "{66800900-45D1-4F5F-B0F0-376D1933E98F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freecer.Domain", "Freecer.Domain\Freecer.Domain.csproj", "{E8D9F511-7A69-4C97-BC61-69C92112297A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freecer.Infra", "Freecer.Infra\Freecer.Infra.csproj", "{3FACD78B-78C2-47AF-B2C0-159FC962AC2A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freecer.Application", "Freecer.Application\Freecer.Application.csproj", "{103B822E-DADD-478C-8DDD-16E10443DBC1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D6CEF00B-EC2C-4552-9FF2-D1395BAE1B52}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{66800900-45D1-4F5F-B0F0-376D1933E98F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66800900-45D1-4F5F-B0F0-376D1933E98F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66800900-45D1-4F5F-B0F0-376D1933E98F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66800900-45D1-4F5F-B0F0-376D1933E98F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8D9F511-7A69-4C97-BC61-69C92112297A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8D9F511-7A69-4C97-BC61-69C92112297A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8D9F511-7A69-4C97-BC61-69C92112297A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8D9F511-7A69-4C97-BC61-69C92112297A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3FACD78B-78C2-47AF-B2C0-159FC962AC2A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3FACD78B-78C2-47AF-B2C0-159FC962AC2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3FACD78B-78C2-47AF-B2C0-159FC962AC2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3FACD78B-78C2-47AF-B2C0-159FC962AC2A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{103B822E-DADD-478C-8DDD-16E10443DBC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{103B822E-DADD-478C-8DDD-16E10443DBC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{103B822E-DADD-478C-8DDD-16E10443DBC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{103B822E-DADD-478C-8DDD-16E10443DBC1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
