@@ -1,7 +1,7 @@
 ﻿using Freecer.Domain.Entities;
+using Freecer.Domain.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 
 namespace Freecer.Infra;
 

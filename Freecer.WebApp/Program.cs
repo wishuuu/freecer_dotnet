@@ -1,4 +1,5 @@
 using Freecer.Application.Middleware;
+using Freecer.Domain.Interfaces;
 using Freecer.Infra;
 using Freecer.WebApp.Middleware;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<FreecerContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+builder.Services.AddDbContext<TenantContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });

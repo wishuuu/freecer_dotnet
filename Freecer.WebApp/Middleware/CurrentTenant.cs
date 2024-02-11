@@ -1,35 +1,27 @@
-﻿using Freecer.Infra;
+﻿using Freecer.Domain.Interfaces;
+using Freecer.Infra;
 
 namespace Freecer.WebApp.Middleware;
 
-public interface ICurrentTenant
-{
-    public int TenantId { get; }
-    public Domain.Entities.Tenant? Tenant { get; }
-    
-    Task<bool> SetTenant(int tenantId);
-}
-
 public class CurrentTenant : ICurrentTenant
 {
-    private readonly UnitOfWork _unitOfWork;
-    public CurrentTenant(UnitOfWork unitOfWork)
+    private readonly TenantContext _context;
+
+    public CurrentTenant(TenantContext context)
     {
-        _unitOfWork = unitOfWork;
+        _context = context;
     }
-    
-    public int TenantId { get; set; }
-    public Domain.Entities.Tenant? Tenant { get; set; }
+
+    public int? TenantId { get; set; }
 
     public async Task<bool> SetTenant(int tenantId)
     {
-        var tenant = await _unitOfWork.Context.Tenants.FindAsync(tenantId);
+        var tenant = await _context.Tenants.FindAsync(tenantId);
         if (tenant is null || tenant.IsDeleted)
         {
-            throw new Exception("Tenant not found");
+            return false;
         }
         TenantId = tenantId;
-        Tenant = tenant;
         return true;
     }
 }
