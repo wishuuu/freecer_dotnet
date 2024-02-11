@@ -9,10 +9,10 @@ public sealed class FreecerContext : DbContext
 {
     public FreecerContext(DbContextOptions<FreecerContext> options) : base(options)
     {
-        Database.EnsureCreated();
     }
 
     public DbSet<User> Users => Set<User>();
+    public DbSet<Tenant> Tenants => Set<Tenant>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -57,6 +57,21 @@ public sealed class FreecerContext : DbContext
 
         #endregion
 
+        #region Tenant
+
+        modelBuilder.Entity<Tenant>()
+            .HasKey(t => t.Id);
+        
+        modelBuilder.Entity<Tenant>()
+            .Property(t => t.Id)
+            .ValueGeneratedOnAdd();
+        
+        modelBuilder.Entity<Tenant>()
+            .Property(t => t.Name)
+            .IsRequired();
+
+        #endregion
+
         #region Default data
         
         IPasswordHasher<User> passwordHasher = new PasswordHasher<User>();
@@ -70,7 +85,13 @@ public sealed class FreecerContext : DbContext
             IsSuperUser = true,
             Email = "kontakt.wiszowaty.o@gmail.com",
             FirstName = "Oskar",
-            LastName = "Wiszowaty"
+            LastName = "Wiszowaty",
+        });
+        
+        modelBuilder.Entity<Tenant>().HasData(new Tenant
+        {
+            Id = 1,
+            Name = "OvSoft"
         });
 
         #endregion

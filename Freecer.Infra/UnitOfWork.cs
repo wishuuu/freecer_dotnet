@@ -1,4 +1,5 @@
 ﻿using Freecer.Domain.Entities;
+using Freecer.Domain.Entities.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace Freecer.Infra;
@@ -16,11 +17,20 @@ public class UnitOfWork : IDisposable, IAsyncDisposable
     {
         foreach (var entity in Context.ChangeTracker
                      .Entries()
-                     .Where(x => x.Entity is BaseEntity && x.State == EntityState.Added)
+                     .Where(x => x is { Entity: BaseEntity, State: EntityState.Added })
                      .Select(x => x.Entity)
                      .Cast<BaseEntity>())
         {
             entity.CreatedAt = DateTime.Now;
+        }
+
+        foreach (var entity in Context.ChangeTracker
+                     .Entries()
+                     .Where(x => x is { Entity: ITenantSpecific, State: EntityState.Added })
+                     .Select(x => x.Entity)
+                     .Cast<ITenantSpecific>())
+        {
+            // SET TENANT ID
         }
 
         return await Context.SaveChangesAsync();

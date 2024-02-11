@@ -6,4 +6,8 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Freecer.Domain\Freecer.Domain.csproj" />
+    </ItemGroup>
+
 </Project>

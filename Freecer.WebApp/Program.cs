@@ -1,4 +1,6 @@
+using Freecer.Application.Middleware;
 using Freecer.Infra;
+using Freecer.WebApp.Middleware;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,7 +15,8 @@ builder.Services.AddDbContext<FreecerContext>(options =>
 });
 
 builder.Services
-    .AddScoped<UnitOfWork>();
+    .AddScoped<UnitOfWork>()
+    .AddScoped<ICurrentTenant, CurrentTenant>();
 
 
 builder.Services.AddSwaggerGen();
@@ -42,6 +45,8 @@ app.UseCors(opt =>
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+
+app.UseMiddleware<TenantResolver>();
 
 
 app.MapControllerRoute(
