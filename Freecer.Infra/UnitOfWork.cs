@@ -8,12 +8,12 @@ namespace Freecer.Infra;
 public class UnitOfWork : IDisposable, IAsyncDisposable
 {
     public readonly FreecerContext Context;
-    private readonly int? CurrentTenantId;
+    private readonly int? _currentTenantId;
 
     public UnitOfWork(FreecerContext context, ICurrentTenant currentTenant)
     {
         Context = context;
-        CurrentTenantId = currentTenant.TenantId;
+        _currentTenantId = currentTenant.TenantId;
     }
 
     public async Task<int> Commit()
@@ -33,7 +33,7 @@ public class UnitOfWork : IDisposable, IAsyncDisposable
                      .Select(x => x.Entity)
                      .Cast<ITenantSpecific>())
         {
-            entity.TenantId = CurrentTenantId ?? throw new ArgumentNullException("Cannot create tenant specific entity without a tenant context");
+            entity.TenantId = _currentTenantId ?? throw new ArgumentNullException("Cannot create tenant specific entity without a tenant context");
         }
 
         return await Context.SaveChangesAsync();

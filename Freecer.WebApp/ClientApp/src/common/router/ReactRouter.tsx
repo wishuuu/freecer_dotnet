@@ -1,19 +1,10 @@
-﻿import {ComponentType} from "react";
+﻿import Home from "../../pages/home/Home.tsx";
 
-
-interface RouteObject {
-    path: string;
-    component: ComponentType;
-    loggedIn: boolean;
-    authorization?: (roles: string[]) => boolean;
-    moduleAccess?: string;
-}
-
-export default function CreateRoutes() : RouteObject[] {
+export default function CreateRoutes() {
     return [
         {
             path: "/",
-            component: () => <div>Home</div>,
+            element: (<Home />),
             loggedIn: false,
         },
     ];

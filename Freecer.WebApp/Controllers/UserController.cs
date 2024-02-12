@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Freecer.Application.Authorization;
+using Freecer.Application.Extensions;
 using Freecer.Domain.Configs;
 using Freecer.Domain.Dtos.Login;
+using Freecer.Domain.Dtos.Register;
 using Freecer.Domain.Dtos.User;
 using Freecer.Domain.Entities;
 using Freecer.Domain.Interfaces.Authorization;
@@ -77,5 +79,54 @@ public class UserController : ApiController
         var session = new SessionDto(userDto, User.GetExpires());
         
         return Ok(session);
+    }
+    
+    [HttpPost("checkusername")]
+    [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
+    public async Task<IActionResult> CheckUsername([FromBody] RegisterUsernameCheckDto model)
+    {
+        var exists = await _unitOfWork.Context.Users.AnyAsync(u => u.Username == model.Username || u.Email == model.Email);
+        return Ok(exists);
+    }
+    
+    [HttpPost("register")]
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> Register([FromBody] RegisterDto model)
+    {
+        if (await _unitOfWork.Context.Users.AnyAsync(u => u.Username == model.Username))
+            return Conflict("Username already exists");
+        
+        if (await _unitOfWork.Context.Users.AnyAsync(u => u.Email == model.Email))
+            return Conflict("Email already exists");
+
+        if (model.Password != model.ConfirmPassword)
+            return BadRequest("Passwords do not match");
+        
+        var user = new User
+        {
+            Username = model.Username,
+            Email = model.Email,
+            FirstName = model.FirstName,
+            LastName = model.LastName,
+            PhoneNumber = model.PhoneNumber,
+            PasswordHash = string.Empty,
+            Salt = string.Empty,
+        };
+        user.SetPassword(model.Password);
+        await _unitOfWork.Context.Users.AddAsync(user);
+        await _unitOfWork.Context.SaveChangesAsync();
+        
+        var token = _tokenService.Create(user, out var claims);
+        Response.Cookies.Append("freecer_jwt", token, new CookieOptions
+        {
+            HttpOnly = true,
+            SameSite = SameSiteMode.None,
+            Secure = true,
+            Expires = DateTime.Now + TimeSpan.FromMinutes(_authConfig.Value.ExpiresInMinutes)
+        });
+        
+        return Ok("User registered successfully");
     }
 }
