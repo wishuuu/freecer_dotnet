@@ -1,4 +1,6 @@
-﻿using Freecer.Domain.Interfaces;
+﻿using Freecer.Domain.Entities;
+using Freecer.Domain.Interfaces;
+using Freecer.Domain.Interfaces.Authorization;
 using Freecer.Infra;
 
 namespace Freecer.WebApp.Middleware;
@@ -13,6 +15,7 @@ public class CurrentTenant : ICurrentTenant
     }
 
     public int? TenantId { get; set; }
+    public Tenant? Tenant => _context.Tenants.Find(TenantId);
 
     public async Task<bool> SetTenant(int tenantId)
     {

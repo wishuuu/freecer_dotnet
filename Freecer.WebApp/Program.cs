@@ -1,14 +1,12 @@
-using System.Text;
 using Freecer.Application.Authorization;
 using Freecer.Application.Middleware;
+using Freecer.Domain;
 using Freecer.Domain.Configs;
-using Freecer.Domain.Interfaces;
 using Freecer.Domain.Interfaces.Authorization;
 using Freecer.Infra;
 using Freecer.WebApp.Middleware;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,43 +22,52 @@ builder.Services.AddDbContext<TenantContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+builder.Services.AddDbContext<UserContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
 
 builder.Services.Configure<AuthConfig>(builder.Configuration.GetSection("AuthConfig"));
 
 builder.Services
     .AddScoped<UnitOfWork>()
     .AddScoped<ICurrentTenant, CurrentTenant>()
+    .AddScoped<ICurrentUser, CurrentUser>()
     .AddScoped<IAuthService, AuthService>(serviceProvider => new AuthService(serviceProvider.GetRequiredService<UnitOfWork>().Context.Users))
     .AddScoped<ITokenService, TokenService>()
     ;
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.Events = new JwtBearerEvents();
-    options.Events.OnMessageReceived = context =>
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+.AddCookie(
+    options =>
     {
-        var accessToken = context.Request.Cookies["freecer_jwt"];
-        context.Token = accessToken;
-        return Task.CompletedTask;
-    };
-    
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["AuthConfig:Issuer"],
-        ValidAudience = builder.Configuration["AuthConfig:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["AuthConfig:Secret"]))
-    };
-})
-    ;
+        options.ExpireTimeSpan = TimeSpan.FromDays(7);
+        options.Cookie.Name = FreecerCookies.AuthCookie;
+        options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None;
+        options.SlidingExpiration = true;
+    }
+//     options =>
+// {
+//     options.Events = new JwtBearerEvents();
+//     options.Events.OnMessageReceived = context =>
+//     {
+//         var accessToken = context.Request.Cookies[FreecerCookies.AuthCookie];
+//         context.Token = accessToken ?? "";
+//         return Task.CompletedTask;
+//     };
+//     
+//     options.TokenValidationParameters = new TokenValidationParameters
+//     {
+//         ValidateIssuer = true,
+//         ValidateAudience = true,
+//         ValidateLifetime = true,
+//         ValidateIssuerSigningKey = true,
+//         ValidIssuer = builder.Configuration["AuthConfig:Issuer"],
+//         ValidAudience = builder.Configuration["AuthConfig:Audience"],
+//         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["AuthConfig:Secret"]))
+//     };
+// }
+    );
 
 builder.Services.AddSwaggerGen();
 
@@ -89,9 +96,14 @@ app.UseCors(opt =>
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+app.UseAuthentication()
+    .UseAuthorization();
+
 app.UseRouting();
 
 app.UseMiddleware<TenantResolver>();
+app.UseMiddleware<UserResolver>();
 
 
 app.MapControllerRoute(

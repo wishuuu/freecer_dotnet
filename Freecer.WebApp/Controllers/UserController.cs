@@ -1,6 +1,8 @@
-﻿using AutoMapper;
+﻿using System.Security.Claims;
+using AutoMapper;
 using Freecer.Application.Authorization;
 using Freecer.Application.Extensions;
+using Freecer.Domain;
 using Freecer.Domain.Configs;
 using Freecer.Domain.Dtos.Login;
 using Freecer.Domain.Dtos.Register;
@@ -8,6 +10,8 @@ using Freecer.Domain.Dtos.User;
 using Freecer.Domain.Entities;
 using Freecer.Domain.Interfaces.Authorization;
 using Freecer.Infra;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -21,14 +25,16 @@ public class UserController : ApiController
     private readonly ITokenService _tokenService;
     private readonly IOptions<AuthConfig> _authConfig;
     private readonly IMapper _mapper;
+    private readonly ICurrentUser _currentUser;
 
-    public UserController(UnitOfWork unitOfWork, IAuthService authService, ITokenService tokenService, IOptions<AuthConfig> authConfig, IMapper mapper)
+    public UserController(UnitOfWork unitOfWork, IAuthService authService, ITokenService tokenService, IOptions<AuthConfig> authConfig, IMapper mapper, ICurrentUser currentUser)
     {
         _unitOfWork = unitOfWork;
         _authService = authService;
         _tokenService = tokenService;
         _authConfig = authConfig;
         _mapper = mapper;
+        _currentUser = currentUser;
     }
 
     [HttpGet]
@@ -48,13 +54,7 @@ public class UserController : ApiController
             return Unauthorized();
         
         var token = _tokenService.Create(user, out var claims);
-        Response.Cookies.Append("freecer_jwt", token, new CookieOptions
-        {
-            HttpOnly = true,
-            SameSite = SameSiteMode.None,
-            Secure = true,
-            Expires = DateTime.Now + TimeSpan.FromMinutes(_authConfig.Value.ExpiresInMinutes)
-        });
+        await SetCookie(user, claims);
         return Ok(token);
     }
     
@@ -62,8 +62,22 @@ public class UserController : ApiController
     [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult Logout()
     {
-        Response.Cookies.Delete("freecer_jwt");
+        Response.Cookies.Delete(FreecerCookies.AuthCookie);
         return Ok();
+    }
+    
+    [HttpPost("refresh")]
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> Refresh()
+    {
+        var user = _currentUser.User;
+        if (user == null)
+            return Unauthorized();
+        
+        var newToken = _tokenService.Create(user, out var claims);
+        await SetCookie(user, claims);
+        return Ok(newToken);
     }
     
     [HttpGet("me")]
@@ -119,14 +133,23 @@ public class UserController : ApiController
         await _unitOfWork.Context.SaveChangesAsync();
         
         var token = _tokenService.Create(user, out var claims);
-        Response.Cookies.Append("freecer_jwt", token, new CookieOptions
-        {
-            HttpOnly = true,
-            SameSite = SameSiteMode.None,
-            Secure = true,
-            Expires = DateTime.Now + TimeSpan.FromMinutes(_authConfig.Value.ExpiresInMinutes)
-        });
+        await SetCookie(user, claims);
         
         return Ok("User registered successfully");
+    }
+
+    private async Task SetCookie(User user, Claim[] claims)
+    {
+        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        
+        var authProperties = new AuthenticationProperties
+        {
+            AllowRefresh = true,
+            ExpiresUtc = DateTimeOffset.UtcNow.AddDays(7),
+            IsPersistent = true,
+            IssuedUtc = DateTimeOffset.UtcNow
+        };
+        
+        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
     }
 }

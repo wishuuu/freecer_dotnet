@@ -1,6 +1,7 @@
 ﻿using Freecer.Domain.Entities;
 using Freecer.Domain.Entities.Interfaces;
 using Freecer.Domain.Interfaces;
+using Freecer.Domain.Interfaces.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 namespace Freecer.Infra;

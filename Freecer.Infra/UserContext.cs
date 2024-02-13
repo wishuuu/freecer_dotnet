@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Freecer.Infra;
 
-public class TenantContext : DbContext
+public class UserContext : DbContext
 {
-    public TenantContext(DbContextOptions<TenantContext> options) : base(options)
+    public UserContext(DbContextOptions<UserContext> options) : base(options)
     {
     }
     
-    public DbSet<Tenant> Tenants => Set<Tenant>();
+    public DbSet<User> Users => Set<User>();
 }

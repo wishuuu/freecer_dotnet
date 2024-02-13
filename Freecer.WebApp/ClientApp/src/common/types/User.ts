@@ -1,9 +1,12 @@
 ﻿import {createContext} from "react";
+import {Moment} from "moment";
 
 interface AuthContextData {
     user: User | null;
-    setAuth: (user: AuthContextData | null) => void;
+    login: (username: string, password: string) => void;
+    logout: () => void;
     expires: Date | null;
+    updated: Moment | null;
 }
 
 interface User {
@@ -17,8 +20,10 @@ interface User {
 
 export const AuthContext = createContext<AuthContextData>({
     user: null,
-    setAuth: () => {},
-    expires: null
+    login: () => {},
+    logout: () => {},
+    expires: null,
+    updated: null
 });
 
 export type { User, AuthContextData };

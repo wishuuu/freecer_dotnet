@@ -1,20 +1,18 @@
-﻿import {useContext} from "react";
-import {StorageKeys, useLocalStorage} from "./useLocalStorage";
-import {AuthContext, AuthContextData} from "../types/User.ts";
+﻿import {StorageKeys, useLocalStorage} from "@/common/hooks/useLocalStorage.ts";
+import {AuthContextData} from "@/common/types/User.ts";
+import {useEffect, useState} from "react";
+
 
 export const useUser = () => {
-    const { user, setAuth, expires } = useContext(AuthContext);
-    const { setItem, removeItem } = useLocalStorage();
+    const {getItem} = useLocalStorage();
+    const [user, setUser] = useState<AuthContextData | null>(null);
+    
+    useEffect(() => {
+        const user = getItem(StorageKeys.authData);
+        if (user) {
+            setUser(JSON.parse(user));
+        }
+    }, []);
 
-    const addUser = (auth: AuthContextData) => {
-        setAuth(auth);
-        setItem(StorageKeys.authData, JSON.stringify(auth));
-    };
-
-    const removeUser = () => {
-        setAuth(null);
-        removeItem(StorageKeys.authData);
-    };
-
-    return { user, expires, addUser, removeUser };
-};
+    return { user } as const;
+}

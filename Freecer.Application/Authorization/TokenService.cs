@@ -53,4 +53,23 @@ public class TokenService : ITokenService
         
         return handler.WriteToken(token);
     }
+
+    public void Validate(string token, out Claim[] claims)
+    {
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authConfig.Value.Secret));
+        var handler = new JwtSecurityTokenHandler();
+        var validationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = _authConfig.Value.Issuer,
+            ValidAudience = _authConfig.Value.Audience,
+            IssuerSigningKey = key
+        };
+        
+        var principal = handler.ValidateToken(token, validationParameters, out var validatedToken);
+        claims = principal.Claims.ToArray();
+    }
 }
