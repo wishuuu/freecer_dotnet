@@ -38,35 +38,14 @@ builder.Services
     ;
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-.AddCookie(
-    options =>
-    {
-        options.ExpireTimeSpan = TimeSpan.FromDays(7);
-        options.Cookie.Name = FreecerCookies.AuthCookie;
-        options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None;
-        options.SlidingExpiration = true;
-    }
-//     options =>
-// {
-//     options.Events = new JwtBearerEvents();
-//     options.Events.OnMessageReceived = context =>
-//     {
-//         var accessToken = context.Request.Cookies[FreecerCookies.AuthCookie];
-//         context.Token = accessToken ?? "";
-//         return Task.CompletedTask;
-//     };
-//     
-//     options.TokenValidationParameters = new TokenValidationParameters
-//     {
-//         ValidateIssuer = true,
-//         ValidateAudience = true,
-//         ValidateLifetime = true,
-//         ValidateIssuerSigningKey = true,
-//         ValidIssuer = builder.Configuration["AuthConfig:Issuer"],
-//         ValidAudience = builder.Configuration["AuthConfig:Audience"],
-//         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["AuthConfig:Secret"]))
-//     };
-// }
+    .AddCookie(
+        options =>
+        {
+            options.ExpireTimeSpan = TimeSpan.FromDays(7);
+            options.Cookie.Name = FreecerCookies.AuthCookie;
+            options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None;
+            options.SlidingExpiration = true;
+        }
     );
 
 builder.Services.AddSwaggerGen();
