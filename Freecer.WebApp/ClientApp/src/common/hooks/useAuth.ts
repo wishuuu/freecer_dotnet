@@ -7,7 +7,7 @@ import {useUser} from "@/common/hooks/useUser.ts";
 
 export const useAuth = () => {
     const {setItem, removeItem} = useLocalStorage();
-    const {user} = useUser();
+    const {user, setUser} = useUser();
 
     useEffect(() => {
         if(needRefresh()) {
@@ -17,6 +17,7 @@ export const useAuth = () => {
                     await api.send(api.config("post", "user/refresh"))
                     user.updated = moment();
                     setItem(StorageKeys.authData, JSON.stringify(user));
+                    setUser(user);
                 }
             });
         } 
@@ -32,6 +33,7 @@ export const useAuth = () => {
                 if (user) {
                     user.updated = moment();
                     setItem(StorageKeys.authData, JSON.stringify(user));
+                    setUser(user);
                 }
             });
         });
