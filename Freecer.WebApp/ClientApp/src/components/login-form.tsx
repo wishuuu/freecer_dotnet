@@ -1,16 +1,16 @@
-﻿import {Input} from "@/components/ui/input.tsx";
+﻿import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card.tsx";
+import {Label} from "@/components/ui/label.tsx";
+import {Input} from "@/components/ui/input.tsx";
+import {Button} from "@/components/ui/button.tsx";
 import {useState} from "react";
 import {useAuth} from "@/common/hooks/useAuth.ts";
-import {Button} from "@/components/ui/button.tsx";
-import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card.tsx";
-import {Label} from "@/components/ui/label.tsx";
 
 
-const Login = () => {
+const LoginForm = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const { login } = useAuth();
-
+    
     return (
         <Card className={"w-[350px] m-auto"}>
             <CardHeader>
@@ -34,10 +34,10 @@ const Login = () => {
                 </div>
             </CardContent>
             <CardFooter className={"flex justify-between"}>
-                <Button onClick={() => login(username, password)}>Login</Button>
+                <Button onClick={() => login(username, password).then(() => window.location.reload())}>Login</Button>
             </CardFooter>
         </Card>
     )
 }
 
-export default Login
+export default LoginForm

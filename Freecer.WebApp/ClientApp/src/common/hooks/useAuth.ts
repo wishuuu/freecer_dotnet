@@ -27,22 +27,20 @@ export const useAuth = () => {
         return api.send<AuthContextData>(api.config("get", "user/me"));
     }
 
-    const login = (username: string, password: string) => {
-        api.send<AuthContextData>(api.config("post", "user/login", {username, password})).then(() => {
-            me().then(async (user) => {
-                if (user) {
-                    user.updated = moment();
-                    setItem(StorageKeys.authData, JSON.stringify(user));
-                    setUser(user);
-                }
-            });
+    const login = async (username: string, password: string) => {
+        return api.send<AuthContextData>(api.config("post", "user/login", {username, password})).then(async () => {
+            let user1 = await me();
+            if (user1) {
+                user1.updated = moment();
+                setItem(StorageKeys.authData, JSON.stringify(user1));
+                setUser(user1);
+            }
         });
     };
     
-    const logout = () => {
-        api.send(api.config("post", "user/logout")).then(() => {
-            removeItem(StorageKeys.authData);
-        });
+    const logout = async () => {
+        await api.send(api.config("post", "user/logout"));
+        removeItem(StorageKeys.authData);
     };
 
     const needRefresh = () => {

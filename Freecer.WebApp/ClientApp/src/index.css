@@ -48,3 +48,13 @@
     --ring: 20.5 90.2% 48.2%;
   }
 }
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  margin: 0 !important;
+  padding: 0 !important;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
