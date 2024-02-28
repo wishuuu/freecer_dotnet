@@ -18,14 +18,12 @@ const MainNavigation = () => {
                     </p>
                     <nav className="ml-auto flex items-center space-x-4">
                         <NavigationMenu>
-                            <div className={"ml-auto flex items-center space-x-4"}>
-                                <NavigationMenuList>
-                                    <NavigationItemsProvider/>
-                                    <NavigationMenuItem>
-                                        <ModeToggle/>
-                                    </NavigationMenuItem>
-                                </NavigationMenuList>
-                            </div>
+                            <NavigationMenuList className={"space-x-1"}>
+                                <NavigationItemsProvider/>
+                                <NavigationMenuItem>
+                                    <ModeToggle/>
+                                </NavigationMenuItem>
+                            </NavigationMenuList>
                         </NavigationMenu>
                     </nav>
                 </div>

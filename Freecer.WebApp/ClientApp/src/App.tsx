@@ -9,7 +9,7 @@ const router = createBrowserRouter(CreateRoutes());
 function App() {
     return (
         <ThemeProvider defaultTheme={"dark"} storageKey={"vite-ui-theme"}>
-            <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors">
+            <div className="flex flex-col text-foreground transition-colors">
                 <MainNavigation/>
                 <RouterProvider router={router}/>
             </div>
