@@ -13,11 +13,6 @@ const MainPageNavigationItems = () => {
         <>
             <NavigationMenuItem>
                 <Button variant={"outline"}>
-                    <a href={"/"}>Home</a>
-                </Button>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-                <Button variant={"outline"}>
                     <a href={"/contact"}>Contact</a>
                 </Button>
             </NavigationMenuItem>
@@ -56,6 +51,11 @@ const LoggedOutNavigationItems = () => {
                     </ul>
                 </NavigationMenuContent>
             </NavigationMenuItem>
+            <NavigationMenuItem>
+                <Button variant={"outline"}>
+                    <a href={"/register"}>Register</a>
+                </Button>
+            </NavigationMenuItem>
         </>
     )
 }
@@ -69,7 +69,6 @@ const NavigationItemsProvider = () => {
                 window.location.pathname === "/" ? <MainPageNavigationItems/> : null
             }
             {
-                // Logged in/out
                 !user ? <LoggedOutNavigationItems/> : <LoggedInNavigationItems/>
             }
         </>
