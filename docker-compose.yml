@@ -2,7 +2,7 @@
   freecer.webapp:
     container_name: freecer-webapp
     image: freecer.webapp
-    restart: always
+    restart: on-failure
     build:
       context: .
       dockerfile: Freecer.WebApp/Dockerfile
@@ -13,7 +13,7 @@
   freecer.db:
     container_name: freecer-db
     image: postgres
-    restart: always
+    restart: on-failure
     environment:
       POSTGRES_DB: freecer
       POSTGRES_USER: freecer

@@ -11,4 +11,7 @@ public class User : BaseEntity
     public required string LastName { get; set; }
     public string? PhoneNumber { get; set; }
     public string? ProfilePicture { get; set; }
+    
+    public virtual ICollection<UserTenant> UserTenants { get; set; } = new List<UserTenant>();
+    public virtual ICollection<Tenant> Tenants { get; set; } = new List<Tenant>();
 }

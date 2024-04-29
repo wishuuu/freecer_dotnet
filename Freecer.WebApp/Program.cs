@@ -10,8 +10,6 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<FreecerContext>(options =>
@@ -86,8 +84,8 @@ app.UseMiddleware<UserResolver>();
 
 
 app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller}/{action=Index}/{id?}");
+    name: "api",
+    pattern: "api/{controller}/{action=Index}/{id?}");
 
 app.MapFallbackToFile("index.html");
 
