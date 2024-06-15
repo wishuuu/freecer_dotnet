@@ -57,7 +57,6 @@ public class UserController : ApiController
         await SetCookie(user, claims);
         return Ok(token);
     }
-    
     [HttpPost("logout")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult Logout()
